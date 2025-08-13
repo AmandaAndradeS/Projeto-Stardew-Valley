@@ -1,0 +1,7 @@
+﻿cultivo;estacao;dias_cresc;tipo_cultivo;intervalo_colheita;preco_semente;preco_venda
+Chirívia;Primavera;4;Única;;20;35
+Morango;Primavera;8;Múltipla;4;100;120
+Melão;Verão;12;Única;;80;250
+Mirtilo;Verão;13;Múltipla;4;80;50
+Abóbora;Outono;13;Única;;100;320
+Oxicoco;Outono;7;Múltipla;5;240;75
