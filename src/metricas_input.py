@@ -1,61 +1,47 @@
-from unidecode import unidecode
+from unidecode import unidecode #biblioteca de remoção de acentos
 
-def metrica_obg():
-    print("Bem-vindo ao ajudante Stardew Valley!\n"
-          "Abaixo você preencherá as métricas importantes para o plantio.\n")
+# lista oficial de estações
+estacoes = ["primavera", "verão", "outono", "inverno"]#lista oficial
+estacoes_normalizadas = [unidecode(e.lower()) for e in estacoes]#mesma lista, porém sem acentos para facilitar comparação
 
-    estacao_list = ["Primavera", "Verão", "Outono", "Inverno"]
-    estacoes_normalizadas = [unidecode(e.lower()) for e in estacao_list]
-
-    # Escolha da estação de início
+def escolher_estacao(msg):#def auxiliar 1
     while True:
-        entrada_ini = input("Em qual estação você deseja começar?: ").strip().lower()
-        entrada_ini_normalizada = unidecode(entrada_ini)
+        entrada = input(msg).strip().lower()
+        entrada_norm = unidecode(entrada) #entrada sem acentos
+        if entrada_norm in estacoes_normalizadas: # verifica se a entrada está na lista
+            indice = estacoes_normalizadas.index(entrada_norm)# verifica o indice e o armazena com base na lista de estações 
+            return estacoes[indice], indice # retorna o nome da estação corretamente e o indice 
+        print("estação inválida! digite: primavera, verão, outono, inverno.")
 
-        if entrada_ini_normalizada not in estacoes_normalizadas:
-            print("Estação inválida! Digite uma das opções: Primavera, Verão, Outono, Inverno.")
-        else:
-            indice_ini = estacoes_normalizadas.index(entrada_ini_normalizada)
-            estacao_ini = estacao_list[indice_ini]
-            break
-
-    # Escolha da estação de término
-    while True:
-        entrada_fim = input("Em qual estação você deseja terminar?: ").strip().lower()
-        entrada_fim_normalizada = unidecode(entrada_fim)
-
-        if entrada_fim_normalizada not in estacoes_normalizadas:
-            print("Estação inválida! Digite uma das opções: Primavera, Verão, Outono, Inverno.")
-        else:
-            indice_fim = estacoes_normalizadas.index(entrada_fim_normalizada)
-            estacao_fim = estacao_list[indice_fim]
-
-            # Bloqueia apenas se a estação final for *menor* que a inicial
-            if indice_fim < indice_ini:
-                print("Intervalo impossível! A estação final não pode ser anterior à inicial.")
-                continue
-            # Se for igual ou maior, continua normalmente
-            break
-
-    # Escolha dos dias
+def escolher_dia(msg):#def auxiliar 2
     while True:
         try:
-            dia_ini = int(input(f"Dia de início em {estacao_ini} (1-28): "))
-            dia_fim = int(input(f"Dia de término em {estacao_fim} (1-28): "))
-
-            if not (1 <= dia_ini <= 28) or not (1 <= dia_fim <= 28):
-                print("Digite dias válidos entre 1 e 28.")
-                continue
-
-            # Se início e término forem na mesma estação, verifica ordem dos dias
-            if estacao_ini == estacao_fim and dia_fim < dia_ini:
-                print("Dia de término deve ser maior ou igual ao dia de início na mesma estação.")
-                continue
-
-            break
-
+            dia = int(input(msg))
+            if 1 <= dia <= 28:
+                return dia
+            print("digite um dia entre 1 e 28.")
         except ValueError:
-            print("Entrada inválida! Digite um número válido.")
+            print("entrada inválida! digite um número.")
+
+def metrica_obg():
+    print("bem-vindo ao ajudante stardew valley!\n"
+          "abaixo você preencherá as métricas importantes para o plantio.\n")
+
+    estacao_ini, idx_ini = escolher_estacao("em qual estação você deseja começar?: ") #guarda nome e indice
+    estacao_fim, idx_fim = escolher_estacao("em qual estação você deseja terminar?: ")
+
+    # valida se intervalo de estações faz sentido
+    while idx_fim < idx_ini:
+        print("intervalo impossível! a estação final não pode ser anterior à inicial.")
+        estacao_fim, idx_fim = escolher_estacao("em qual estação você deseja terminar?: ")
+
+    dia_ini = escolher_dia(f"dia de início em {estacao_ini} (1-28): ")
+    dia_fim  = escolher_dia(f"dia de término em {estacao_fim} (1-28): ")
+
+    # valida ordem dos dias na mesma estação
+    while estacao_ini == estacao_fim and dia_fim < dia_ini:
+        print("dia de término deve ser maior ou igual ao dia de início na mesma estação.")
+        dia_fim = escolher_dia(f"dia de término em {estacao_fim} (1-28): ")
 
     return {
         "estacao_ini": estacao_ini,
