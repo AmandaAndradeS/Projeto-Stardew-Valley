@@ -1,16 +1,12 @@
-# main.py
-
-# Importa funções do arquivo modelo.py
-from modelo import carregar_cultivos, carregar_eventos, criar_calendario, anotar_feriados, cultivos_duas_estacoes
-# Importa função de métricas do arquivo metricas_input.py
+from modelo import carregar_cultivos, carregar_eventos, criar_calendario, anotar_feriados, cultivos_com_intervalo
 from metricas_input import metrica_obg
 
 if __name__ == "__main__":
-    # Carrega dados dos arquivos CSV
+    # Carrega dados dos CSVs
     eventos_df = carregar_eventos()
     cultivos_df = carregar_cultivos()
 
-    # Cria calendário completo (4 estações x 28 dias)
+    # Cria calendário completo
     todas_estacoes = ["Primavera", "Verão", "Outono", "Inverno"]
     calendario_completo = []
     for est in todas_estacoes:
@@ -20,18 +16,12 @@ if __name__ == "__main__":
     # Coleta métricas do usuário
     metricas = metrica_obg()
 
-    # Filtra cultivos de acordo com as estações escolhidas
-    resultado = cultivos_duas_estacoes(metricas, cultivos_df)
+    # Calcula cultivos possíveis no intervalo
+    cultivos_possiveis = cultivos_com_intervalo(metricas, cultivos_df)
 
-    # Exibe resultado
-    if "mesma_estacao" in resultado:
-        print(f"Plantas na estação {metricas['estacao_ini']}:")
-        print(resultado["mesma_estacao"][["cultivo", "estacao"]])
-    elif "crescem_nas_duas" in resultado:
-        print("Plantas que crescem nas duas estações escolhidas:")
-        print(resultado["crescem_nas_duas"][["cultivo", "estacao"]])
+    if cultivos_possiveis.empty:
+        print("Nenhuma planta disponível para o intervalo selecionado.")
     else:
-        print(f"Plantas na estação {metricas['estacao_ini']}:")
-        print(resultado["estacao_ini"][["cultivo", "estacao"]])
-        print(f"\nPlantas na estação {metricas['estacao_fim']}:")
-        print(resultado["estacao_fim"][["cultivo", "estacao"]])
+        print("Cultivos possíveis e número de colheitas:")
+        for _, row in cultivos_possiveis.iterrows():
+            print(f"- {row['planta'].capitalize()}: {row['colheitas']} colheita(s)")
