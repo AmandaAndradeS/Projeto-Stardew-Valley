@@ -1,19 +1,19 @@
 ﻿estacao;festival;dia_festival;afeta_cultivo;obs
-Primavera;Festival do Ovo;13;Parcial;Cidade e Lojas fechadas, porém no festival pierre apresentará a compra do morango, ao sair da fazenda o jogador será redirecionado para o festival (se passar pela cidade)
-Primavera;Festival do Deserto;15;Parcial;Ocorre unicamente no deserto e não afeta a cidade (Pierre não estará na loja), caso o jogador tenha o onibus desbloqueado
-Primavera;Festival do Deserto;16;Não;Alguns npcs de loja estarão ocupados no festival caso tenha o onibus, mas pierre estará na loja
-Primavera;Festival do Deserto;17;Não;Alguns npcs de loja estarão ocupados no festival caso tenha o onibus, mas pierre estará na loja
-Primavera;Dança das Flores;24;Sim;Área central da fazenda bloqueada (lojas e cidade)
-Verão;Luau;11;Parcial;O jogador pode não participar do festival, mas lojas não estaram funcionando
-Verão;Competição de Truta;20;Não;nenhuma loja afetada ou horário do jogador
-Verão;Competição de Truta;21;"Não	";nenhuma loja afetada ou horário do jogador
-Verão; Dança das Medusas-da-Lua;28;"Não	";Não, festival n atrapalha em nd
-Outono; Feira do Vale do Orvalho;16;Parcial;Cidade e Lojas fechadasao sair da fazenda o jogador será redirecionado para o festival (se passar pela cidade)
-Outono;Véspera dos Espíritos;27;"Não	";O jogador pode acessar livremente a cidade até antes das 22 hrs
-Inverno;Festival do Gelo;8;"Não	";Inverno não tem oq plantar
-Inverno;Festival da Lula;12;"Não	";Inverno não tem oq plantar e o festival n atrapalha em nd
-Inverno;Festival da Lula;13;"Não	";Inverno não tem oq plantar e o festival n atrapalha em nd
-Inverno;Mercado Noturno;15;"Não	";Inverno não tem oq plantar e o festival n atrapalha em nd
-Inverno;Mercado Noturno;16;"Não	";Inverno não tem oq plantar e o festival n atrapalha em nd
-Inverno;Mercado Noturno;17;"Não	";Inverno não tem oq plantar e o festival n atrapalha em nd
-Inverno;Festival da Estrela Invernal;25;"Não	";Inverno não tem oq plantar
+primavera;festival do ovo;13;parcial;Cidade e lojas fechadas, mas Pierre vende morangos no festival
+primavera;festival do deserto;15;parcial;Só no deserto, Pierre não está na loja
+primavera;festival do deserto;16;nao;Alguns NPCs ocupados, mas Pierre está na loja
+primavera;festival do deserto;17;nao;Alguns NPCs ocupados, mas Pierre está na loja
+primavera;dança das flores;24;sim;Área central bloqueada, cidade e lojas fechadas
+verao;luau;11;parcial;Jogador pode não participar, mas lojas não funcionam
+verao;competição de truta;20;nao;Nenhuma loja afetada
+verao;competição de truta;21;nao;Nenhuma loja afetada
+verao;dança das medusas-da-lua;28;nao;Festival não atrapalha
+outono;feira do vale do orvalho;16;parcial;Cidade e lojas fechadas, redireciona para o festival
+outono;véspera dos espíritos;27;nao;Cidade acessível até 22h
+inverno;festival do gelo;8;nao;Inverno não tem cultivo
+inverno;festival da lula;12;nao;Inverno não tem cultivo
+inverno;festival da lula;13;nao;Inverno não tem cultivo
+inverno;mercado noturno;15;nao;Inverno não tem cultivo
+inverno;mercado noturno;16;nao;Inverno não tem cultivo
+inverno;mercado noturno;17;nao;Inverno não tem cultivo
+inverno;festival da estrela invernal;25;nao;Inverno não tem cultivo

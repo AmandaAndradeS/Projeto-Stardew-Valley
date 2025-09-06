@@ -32,10 +32,12 @@ def anotar_feriados(calendario, eventos_df):
             dia["feriado"] = True
             dia["festival"] = info["festival"]
             dia["afeta_cultivo"] = info["afeta_cultivo"]
+            dia["obs"] = info["obs"]
         else:
             dia["feriado"] = False
             dia["festival"] = None
             dia["afeta_cultivo"] = None
+            dia["obs"] = None
     return calendario
 
 def transformar_intervalo_em_dias(metricas):
@@ -49,55 +51,53 @@ def transformar_intervalo_em_dias(metricas):
     dias_na_fim = metricas["dia_fim"]
     return dias_na_ini + dias_intermediarios + dias_na_fim
 
-def cresce_na_estacao(estacao_cultivo, estacao_verificar):
-    return estacao_verificar in [e.strip().lower() for e in estacao_cultivo.split(",")]
+def cresce_na_estacao(estacoes, estacao):
+    return estacao in {e.strip().lower() for e in estacoes.split(",")}
 
 def cultivos_por_estacao(metricas, cultivos_df):
-    estacao_ini = metricas["estacao_ini"].strip().lower()
-    estacao_fim = metricas["estacao_fim"].strip().lower()
-    if estacao_ini == estacao_fim:
-        return cultivos_df[cultivos_df["estacao"].apply(lambda x: cresce_na_estacao(x, estacao_ini))]
-    plantas_ambas = cultivos_df[cultivos_df["estacao"].apply(
-        lambda x: cresce_na_estacao(x, estacao_ini) and cresce_na_estacao(x, estacao_fim)
+    est_ini = metricas["estacao_ini"].strip().lower()
+    est_fim = metricas["estacao_fim"].strip().lower()
+    if est_ini == est_fim:
+        return cultivos_df.loc[cultivos_df["estacao"].apply(lambda e: cresce_na_estacao(e, est_ini))]
+    df = cultivos_df.loc[cultivos_df["estacao"].apply(
+        lambda e: cresce_na_estacao(e, est_ini) and cresce_na_estacao(e, est_fim)
     )]
-    if not plantas_ambas.empty:
-        return plantas_ambas
-    return pd.concat([
-        cultivos_df[cultivos_df["estacao"].apply(lambda x: cresce_na_estacao(x, estacao_ini))],
-        cultivos_df[cultivos_df["estacao"].apply(lambda x: cresce_na_estacao(x, estacao_fim))]
-    ])
+    if not df.empty:
+        return df
+    return cultivos_df.loc[cultivos_df["estacao"].apply(
+        lambda e: cresce_na_estacao(e, est_ini) or cresce_na_estacao(e, est_fim)
+    )]
 
-def calcular_colheitas_simples(dias_totais, dias_cresc, intervalo_colheita):
-    if pd.isna(intervalo_colheita) or intervalo_colheita == 0:
+def calcular_colheitas(dias_totais, dias_cresc, intervalo):
+    if not intervalo or pd.isna(intervalo):  
         return dias_totais // dias_cresc
-    primeiro_dia_colheita = dias_cresc + 1
-    if primeiro_dia_colheita > dias_totais:
+    if dias_totais < dias_cresc:
         return 0
-    colheitas = 1
-    dia_atual = primeiro_dia_colheita
-    while True:
-        proxima_colheita = dia_atual + intervalo_colheita
-        if proxima_colheita > dias_totais:
-            break
-        colheitas += 1
-        dia_atual = proxima_colheita
-    return colheitas
+    return 1 + (dias_totais - dias_cresc) // intervalo
 
-def cultivos_com_intervalo(metricas, cultivos_df):
-    plantas_filtradas = cultivos_por_estacao(metricas, cultivos_df)
+def lucro_esperado(planta, colheitas, preco_venda):
+    multiplos = {"café": 4, "mirtilo": 3, "oxicoco": 2}
+    qtd = multiplos.get(planta.lower(), 1)
+    return preco_venda * colheitas * qtd 
+
+def listar_plantas_possiveis(metricas, cultivos_df):
     dias_totais = transformar_intervalo_em_dias(metricas)
-    cultivos_possiveis = []
-    for _, row in plantas_filtradas.iterrows():
-        n_colheitas = calcular_colheitas_simples(
-            dias_totais,
-            row["dias_cresc"],
-            row["intervalo_colheita"]
-        )
-        if n_colheitas > 0:
-            cultivos_possiveis.append({
+    plantas = cultivos_por_estacao(metricas, cultivos_df)
+    resultado = []
+    for _, row in plantas.iterrows():
+        if row["cultivo"] == "morango":
+            if metricas["estacao_ini"].lower() == "primavera":
+                dias_totais = (28 - 13) + 1
+            else:
+                continue
+        colheitas = calcular_colheitas(dias_totais, row["dias_cresc"], row["intervalo_colheita"])
+        if colheitas > 0:
+            resultado.append({
                 "planta": row["cultivo"],
                 "estacoes": row["estacao"],
-                "dias_cresc": row["dias_cresc"],
-                "colheitas": n_colheitas
+                "colheitas_possiveis": colheitas,
+                "lucro_unit": lucro_esperado(row["cultivo"], 1, row["preco_venda"]),
+                "lucro_total": lucro_esperado(row["cultivo"], colheitas, row["preco_venda"])
             })
-    return pd.DataFrame(cultivos_possiveis)
+    resultado.sort(key=lambda x: x["lucro_unit"], reverse=True)
+    return resultado
