@@ -1,9 +1,10 @@
 import pandas as pd
+from unidecode import unidecode
 
 def carregar_cultivos(caminho=r"F:\Visual Studio Code\Workspace\Github Projetos\Stardew project\data\Cultivos.csv"):
     df = pd.read_csv(caminho, sep=";")
     for coluna in df.select_dtypes(include="object").columns:
-        df[coluna] = df[coluna].str.strip().str.lower()
+        df[coluna] = df[coluna].astype(str).str.strip().str.lower().apply(unidecode)
     for coluna in ["dias_cresc", "intervalo_colheita", "preco_semente", "preco_venda"]:
         df[coluna] = pd.to_numeric(df[coluna], errors="coerce")
     return df
@@ -11,14 +12,15 @@ def carregar_cultivos(caminho=r"F:\Visual Studio Code\Workspace\Github Projetos\
 def carregar_eventos(caminho=r"F:\Visual Studio Code\Workspace\Github Projetos\Stardew project\data\Estações e Festivais.csv"):
     df = pd.read_csv(caminho, sep=";")
     for coluna in df.select_dtypes(include="object").columns:
-        df[coluna] = df[coluna].str.strip().str.lower()
+        df[coluna] = df[coluna].astype(str).str.strip().str.lower().apply(unidecode)
     df["dia_festival"] = pd.to_numeric(df["dia_festival"], errors="coerce").astype("Int64")
     return df
 
 def criar_calendario(estacao):
     dias_semana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
+    estacao_normalizada = unidecode(estacao.strip().lower())
     return [
-        {"estacao": estacao.lower(), "dia": dia, "dia_semana": dias_semana[(dia - 1) % 7]}
+        {"estacao": estacao_normalizada, "dia": dia, "dia_semana": dias_semana[(dia - 1) % 7]}
         for dia in range(1, 29)
     ]
 
@@ -41,7 +43,7 @@ def anotar_feriados(calendario, eventos_df):
     return calendario
 
 def transformar_intervalo_em_dias(metricas):
-    estacoes = ["primavera", "verão", "outono", "inverno"]
+    estacoes = ["primavera", "verao", "outono", "inverno"]
     idx_ini = estacoes.index(metricas["estacao_ini"].strip().lower())
     idx_fim = estacoes.index(metricas["estacao_fim"].strip().lower())
     if idx_ini == idx_fim:
@@ -52,7 +54,7 @@ def transformar_intervalo_em_dias(metricas):
     return dias_na_ini + dias_intermediarios + dias_na_fim
 
 def cresce_na_estacao(estacoes, estacao):
-    return estacao in {e.strip().lower() for e in estacoes.split(",")}
+    return estacao in {unidecode(e.strip().lower()) for e in estacoes.split(",")}
 
 def cultivos_por_estacao(metricas, cultivos_df):
     est_ini = metricas["estacao_ini"].strip().lower()
@@ -76,7 +78,7 @@ def calcular_colheitas(dias_totais, dias_cresc, intervalo):
     return 1 + (dias_totais - dias_cresc) // intervalo
 
 def lucro_esperado(planta, colheitas, preco_venda):
-    multiplos = {"café": 4, "mirtilo": 3, "oxicoco": 2}
+    multiplos = {"cafe": 4, "mirtilo": 3, "oxicoco": 2}
     qtd = multiplos.get(planta.lower(), 1)
     return preco_venda * colheitas * qtd 
 

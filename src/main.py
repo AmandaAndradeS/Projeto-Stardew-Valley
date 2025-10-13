@@ -11,7 +11,7 @@ if __name__ == "__main__":
     cultivos_df = carregar_cultivos()
     eventos_df = carregar_eventos()
 
-    todas_estacoes = ["Primavera", "Verão", "Outono", "Inverno"]
+    todas_estacoes = ["Primavera", "Verao", "Outono", "Inverno"]
     calendario_completo = []
     for est in todas_estacoes:
         calendario_completo.extend(criar_calendario(est))
@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 f"Custo total de sementes: {custo_area}"
             )
 
-    estacoes = ["primavera", "verão", "outono", "inverno"]
+    estacoes = ["primavera", "verao", "outono", "inverno"]
     idx_ini = estacoes.index(metricas["estacao_ini"].lower())
     idx_fim = estacoes.index(metricas["estacao_fim"].lower())
 
