@@ -3,6 +3,8 @@ import platform
 import tkinter as tk
 from tkinter import font as tkFont
 from PIL import Image, ImageTk, ImageDraw
+import subprocess
+import sys
 
 # ────────────────────────────────────────────────
 # Caminhos absolutos
@@ -76,6 +78,8 @@ def criar_estados_botao():
 def iniciar_jogo():
     print("✅ Iniciando o aplicativo principal...")
     janela.destroy()
+    caminho_script = os.path.join(os.path.dirname(__file__), "interface_sistema.py")
+    subprocess.Popen([sys.executable, caminho_script])
 
 
 def sair_jogo():
